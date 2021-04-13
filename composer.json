@@ -1,0 +1,31 @@
+{
+  "name": "netbrothers-gmbh/syncacc-bundle",
+  "description": "Using NetBrothers Access Control Center in Symfony",
+  "version": "0.0.1",
+  "keywords": ["symfony","bundle","permissions","acl"],
+  "type": "symfony-bundle",
+  "require": {
+    "php": ">=7.4",
+    "symfony/console": "*",
+    "symfony/dotenv": "*",
+    "symfony/orm-pack": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "NetBrothers\\SyncAccBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "NetBrothers\\SyncAccBundle\\Tests\\": "tests/"
+    }
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Stefan Wessel",
+      "email": "stefan.wessel@netbrothers.de"
+    }
+  ]
+}

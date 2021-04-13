@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="netbrothers_syncacc.services.acc_service"
+                 class="NetBrothers\SyncAccBundle\Services\AccService"
+                 public="true">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+        </service>
+        <service id="NetBrothers\SyncAccBundle\Services\AccService"
+                 alias="netbrothers_syncacc.services.acc_service"
+                 public="false">
+        </service>
+
+
+        <service id="netbrothers_syncacc.command.sync_command"
+                 class="NetBrothers\SyncAccBundle\Command\SyncCommand"
+                 public="true">
+            <tag name="console.command" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+        </service>
+
+    </services>
+
+
+</container>

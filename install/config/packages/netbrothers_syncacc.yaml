@@ -1,0 +1,9 @@
+netbrothers_syncacc:
+  # ACC - Einstellungen
+  acc_enable: '%env(bool:ACC_ENABLE)%'
+  acc_server: '%env(string:ACC_SERVER)%'
+  acc_software_token: '%env(string:ACC_SOFTWARE_TOKEN)%'
+  acc_server_token: '%env(string:ACC_SERVER_TOKEN)%'
+  acc_use_basic_auth: '%env(bool:ACC_USE_BASIC_AUTH)%'
+  acc_basic_auth_user: '%env(string:ACC_BASIC_AUTH_USER)%'
+  acc_basic_auth_password: '%env(string:ACC_BASIC_AUTH_PASSWORD)%'
