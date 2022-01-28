@@ -81,7 +81,7 @@ EOF;
             ->addOption(
                 'sync-table',
                 '',
-                InputOption::VALUE_NONE,
+                InputOption::VALUE_OPTIONAL,
                 '[role|acl|all], role for updating table AclRole, acl for updating table AclAllow, all for all :)'
             )
         ;
