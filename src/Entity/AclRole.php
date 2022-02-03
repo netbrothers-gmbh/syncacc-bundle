@@ -22,39 +22,39 @@ class AclRole
      * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private string $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $displayName;
+    private ?string $displayName = null;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $beschreibung;
+    private ?string $beschreibung = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true, options={"default":0})
      */
-    private $hierarchyId;
+    private int $hierarchyId = 0;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $defaultRoute;
+    private ?string $defaultRoute = null;
 
     /**
      * @ORM\Column(type="boolean", options={"default":false})
      */
-    private $isHidden;
+    private bool $isHidden = false;
 
-    public function setId(int $id)
+    public function setId(int $id): self
     {
         $this->id = $id;
         return $this;

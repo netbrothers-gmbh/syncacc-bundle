@@ -33,7 +33,7 @@ class NetBrothersSyncAccExtension extends Extension
         $syncAccService->setArgument(1, $container->getParameter('acc'));
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'netbrothers_syncacc';
     }

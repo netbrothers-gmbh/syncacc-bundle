@@ -30,9 +30,9 @@ class AclRoleRepository extends EntityRepository
 
     /**
      * @param int $hierarchyId
-     * @return mixed
+     * @return array
      */
-    public function getRolesUnderHierarchy(int $hierarchyId = 0)
+    public function getRolesUnderHierarchy(int $hierarchyId = 0): array
     {
         $qb = $this->createQueryBuilder('acl_role')
             ->andWhere('acl_role.isHidden = :isHidden')

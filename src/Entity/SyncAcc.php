@@ -22,17 +22,17 @@ class SyncAcc
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $actionName;
+    private string $actionName;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $lastCall;
+    private ?\DateTimeInterface $lastCall = null;
 
     public function getId(): ?int
     {

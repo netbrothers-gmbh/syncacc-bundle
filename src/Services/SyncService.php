@@ -26,23 +26,17 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 class SyncService
 {
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    /** @var EntityManagerInterface */
+    private EntityManagerInterface $entityManager;
 
-    /**
-     * @var HttpClientService
-     */
-    private $clientService;
+    /** @var HttpClientService */
+    private HttpClientService $clientService;
 
-    /**
-     * @var TableService
-     */
-    private $tableService;
+    /** @var TableService */
+    private TableService $tableService;
 
     /** @var string */
-    private $requestAction = 'get-roles';
+    private string $requestAction = 'get-roles';
 
 
     /**
@@ -59,9 +53,9 @@ class SyncService
 
     /**
      * @param string $requestAction
-     * @throws \Exception
+     * @throws \Exception|TransportExceptionInterface
      */
-    public function execute($requestAction = 'get-roles')
+    public function execute(string $requestAction = 'get-roles')
     {
         if ($requestAction == 'all') {
             $this->requestAction = 'get-roles';
@@ -88,12 +82,20 @@ class SyncService
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
+     * @throws \Exception
      */
     private function getRoles()
     {
         $response = $this->clientService->getRoles($this->tableService->getSyncAccEntity());
         if (false === $response) {
             throw new \Exception("Cannot get roles from ACC-Server");
+        }
+        if (is_array($response)
+            && array_key_exists('error', $response)
+            && array_key_exists('update', $response)) {
+            if (true !== boolval($response['error']) && true !== boolval($response['update'])) {
+                return;
+            }
         }
         $this->tableService->setRoles($response);
     }
@@ -103,6 +105,7 @@ class SyncService
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
+     * @throws \Exception
      */
     private function getPermissionsForRoles()
     {
@@ -113,9 +116,14 @@ class SyncService
             if (false === $response) {
                 throw new \Exception("Cannot get permission for role " . $role->getDisplayName() . " from ACC-Server");
             }
+            if (is_array($response)
+                && array_key_exists('error', $response)
+                && array_key_exists('update', $response)) {
+                if (true !== boolval($response['error']) && true !== boolval($response['update'])) {
+                    return;
+                }
+            }
             $this->tableService->setAuthForOneRole($role, $response);
         }
     }
-
-
 }

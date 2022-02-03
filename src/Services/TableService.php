@@ -23,8 +23,11 @@ use NetBrothers\SyncAccBundle\Entity\SyncAcc;
 class TableService
 {
 
-    /** @var SyncAcc */
-    private $syncAccEntity = null;
+    /** @var EntityManagerInterface */
+    private EntityManagerInterface $entityManager;
+
+    /** @var SyncAcc|null */
+    private ?SyncAcc $syncAccEntity = null;
 
     /**
      * @return SyncAcc
@@ -33,11 +36,6 @@ class TableService
     {
         return $this->syncAccEntity;
     }
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
 
     /**
      * TableService constructor.
@@ -65,11 +63,15 @@ class TableService
 
     /**
      * @param string $requestAction
+     * @throws \Exception
      */
-    public function setSyncAccEntity($requestAction = 'get-roles')
+    public function setSyncAccEntity(string $requestAction = 'get-roles')
     {
+        if (!in_array($requestAction, ['get-roles', 'get-acl'])) {
+            throw new \Exception(sprintf('Requested action %s is not defined', $requestAction));
+        }
         $repository = $this->entityManager->getRepository(SyncAcc::class);
-        $this->syncAccEntity = $repository->findOneByActionName($requestAction);
+        $this->syncAccEntity = $repository->findOneByActionName($requestAction); /** @phpstan-ignore-line */
         if (is_null($this->syncAccEntity)) {
             $this->syncAccEntity = new SyncAcc();
             $lastCall = new \DateTime('2000-01-01 00:00:00');
@@ -92,40 +94,32 @@ class TableService
      * @param $response
      * @throws ConnectionException
      * @throws Exception
+     * @throws \Exception
      */
     public function setRoles($response)
     {
         $con = $this->entityManager->getConnection();
-        $con->beginTransaction();
-        try {
-            $platform = $con->getDatabasePlatform();
-            $con->executeQuery('SET FOREIGN_KEY_CHECKS = 0;');
-            $con->executeStatement($platform->getTruncateTableSQL('acl_role'));
-            $con->executeQuery('SET FOREIGN_KEY_CHECKS = 1;');
-            if (is_array($response) ) {
-                if (array_key_exists('roles', $response)) {
-                    foreach ($response['roles'] as $roleArray) {
-                        $this->addOneRole($roleArray);
-                    }
-                } else {
-                    throw new \Exception("Could not find key roles");
-                }
-                $this->entityManager->flush();
-                $con->commit();
-
-            } elseif (is_object($response)) {
-                foreach ($response->roles as $role) {
-                    $roleArray = (array)$role;
+        $platform = $con->getDatabasePlatform();
+        $con->executeQuery('SET FOREIGN_KEY_CHECKS = 0;');
+        $con->executeStatement($platform->getTruncateTableSQL('acl_role'));
+        $con->executeQuery('SET FOREIGN_KEY_CHECKS = 1;');
+        if (is_array($response) ) {
+            if (array_key_exists('roles', $response)) {
+                foreach ($response['roles'] as $roleArray) {
                     $this->addOneRole($roleArray);
                 }
-                $this->entityManager->flush();
-                $con->commit();
             } else {
-                throw new \Exception("Could not read response.");
+                throw new \Exception("Could not find key roles");
             }
-        } catch (\Exception $e) {
-            $con->rollBack();
-            throw $e;
+            $this->entityManager->flush();
+        } elseif (is_object($response)) {
+            foreach ($response->roles as $role) {
+                $roleArray = (array)$role;
+                $this->addOneRole($roleArray);
+            }
+            $this->entityManager->flush();
+        } else {
+            throw new \Exception("Could not read response.");
         }
     }
 
@@ -153,6 +147,7 @@ class TableService
     /**
      * @param AclRole $aclRole
      * @param $response
+     * @throws \Exception
      */
     public function setAuthForOneRole(AclRole $aclRole, $response)
     {
@@ -185,7 +180,8 @@ class TableService
     }
 
     /**
-     * @param array $aclRole
+     * @param AclRole $aclRole
+     * @param array $action
      */
     private function addOneAcl(AclRole $aclRole, array $action)
     {
