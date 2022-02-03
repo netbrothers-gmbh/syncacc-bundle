@@ -27,10 +27,10 @@ class SyncAccRepository extends EntityRepository
 
     /**
      * @param string $requestAction
-     * @return mixed
+     * @return SyncAcc|null
      * @throws NonUniqueResultException
      */
-    public function findOneByActionName($requestAction = 'get-roles')
+    public function findOneByActionName(string $requestAction = 'get-roles'): ?SyncAcc
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.actionName = :val')

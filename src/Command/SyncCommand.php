@@ -49,28 +49,28 @@ Example:
 EOF;
 
     /** @var SyncService */
-    private $service;
+    private SyncService $service;
 
     /** @var array benötigte Haupt-Schlüssel in der Konfiguration */
-    private $configKeys = array( 'acc_enable', 'acc_server', 'acc_software_token', 'acc_server_token');
+    private array $configKeys = array( 'acc_enable', 'acc_server', 'acc_software_token', 'acc_server_token');
 
     /** @var array benötigte Haupt-Schlüssel in der Konfiguration */
-    private $configAuthKeys = array('acc_basic_auth_user', 'acc_basic_auth_password');
+    private array $configAuthKeys = array('acc_basic_auth_user', 'acc_basic_auth_password');
 
     /** @var array Konfiguration für den HttpClient */
-    private $clientConfig = [
+    private array $clientConfig = [
         'auth_basic' => [],
         'headers' => ['Content-Type' => 'application/json'],
     ];
 
     /** @var string[]  */
-    private $allowedOptions = ['role', 'acl', 'all'];
+    private array $allowedOptions = ['role', 'acl', 'all'];
 
     /** @var array */
-    private $config = [];
+    private array $config = [];
 
     /** @var HttpClientService */
-    private $httpService;
+    private HttpClientService $httpService;
 
     protected function configure()
     {

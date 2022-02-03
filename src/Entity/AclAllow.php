@@ -22,32 +22,32 @@ class AclAllow
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $idAclRole;
+    private int $idAclRole;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $controllerName;
+    private string $controllerName;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $actionName;
+    private string $actionName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $method;
+    private string $method;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $reasonType;
+    private int $reasonType;
 
     public function getId(): ?int
     {

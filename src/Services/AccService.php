@@ -12,9 +12,8 @@ namespace NetBrothers\SyncAccBundle\Services;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use http\Client\Curl\User;
 use NetBrothers\SyncAccBundle\Entity\AclAllow;
-use Symfony\Component\Security\Core\Security;
+use NetBrothers\SyncAccBundle\Entity\AclRole;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -24,10 +23,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class AccService
 {
     /** @var EntityManagerInterface */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
-    /** @var UserInterface */
-    private $user = null;
+    /** @var UserInterface|null */
+    private ?UserInterface $user = null;
 
     /** @param UserInterface $user */
     public function setUser(UserInterface $user): void
@@ -66,11 +65,18 @@ class AccService
     }
 
     /**
+     * @param UserInterface|null $user
      * @param string|null $routeName
      * @param string|null $method
      * @return bool
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function isAllowedByUserRoles(UserInterface $user, string $routeName = null, string $method = null): bool
+    public function isAllowedByUserRoles(
+        UserInterface $user = null,
+        string $routeName = null,
+        string $method = null
+    ): bool
     {
         if ( null === $routeName) {
             return false;
@@ -106,11 +112,11 @@ class AccService
 
     /**
      * @param UserInterface|null $user
-     * @return array|ArrayCollection|int|string
+     * @return array|ArrayCollection
      */
     public function getRolesAllowedByUser(UserInterface $user = null)
     {
-        if (null === $user || '' === $user) {
+        if (empty($user) || true !== method_exists($user, 'getAclRole')) {
             return new ArrayCollection();
         }
         $hierarchyId = $user->getAclRole()->getHierarchyId();

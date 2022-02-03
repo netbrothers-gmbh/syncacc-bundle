@@ -10,6 +10,7 @@
 namespace NetBrothers\SyncAccBundle;
 
 use NetBrothers\SyncAccBundle\DependencyInjection\NetBrothersSyncAccExtension;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -21,7 +22,7 @@ class NetBrothersSyncAccBundle extends Bundle
     /**
      * Overridden to allow for the custom extension alias.
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         if (null === $this->extension) {
             $this->extension = new NetBrothersSyncAccExtension();

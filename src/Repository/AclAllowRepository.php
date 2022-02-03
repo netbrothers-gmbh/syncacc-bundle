@@ -46,9 +46,10 @@ class AclAllowRepository extends EntityRepository
     /**
      * @param array|int $idAclRole
      * @param string $routeName
+     * @param string|null $method
      * @return bool
      */
-    public function isRouteAllowed($idAclRole, string $routeName, string $method = null)
+    public function isRouteAllowed($idAclRole, string $routeName, string $method = null): bool
     {
         try {
             $qb = $this->createQueryBuilder('aclAllow');

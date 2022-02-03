@@ -33,13 +33,13 @@ class HttpClientService
     const ACC_BUILD_NAME_ROUTE = "/sync/get-build/";
 
     /** @var array Konfiguration für den HttpClient */
-    private $clientConfig = [
+    private array $clientConfig = [
         'auth_basic' => [],
         'headers' => ['Content-Type' => 'application/json'],
     ];
 
     /** @var array */
-    private $config = [];
+    private array $config = [];
 
     public function __construct(array $config, array $clientConfig)
     {
@@ -48,13 +48,14 @@ class HttpClientService
     }
 
     /**
-     * @return mixed|null
+     * @return string|null
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function getBuildName() {
+    public function getBuildName(): ?string
+    {
         $url  = $this->config['acc_server'] . self::ACC_BUILD_NAME_ROUTE;
         $url .=  $this->config['acc_software_token'] . '/' . $this->config['acc_server_token'];
         $response = $this->send($url);
@@ -74,17 +75,13 @@ class HttpClientService
      */
     public function getRoles(SyncAcc $syncAcc)
     {
-        $timestamp = $syncAcc->getLastCall()->getTimestamp();
-        $baseUrl = $this->config['acc_server'] . self::ACC_SERVER_ROUTE_ROLE ;
-        $tUrl = preg_replace("/softwareToken/", $this->config['acc_software_token'], $baseUrl);
-        $t2Url = preg_replace("/serverToken/", $this->config['acc_server_token'], $tUrl);
-        $url = preg_replace("/timestamp/", $timestamp, $t2Url);
+        $url = $this->createUrl($syncAcc, null);
         return $this->send($url);
-
     }
 
     /**
-     * @param int|null $idRole
+     * @param SyncAcc $syncAcc
+     * @param int $idRole
      * @return bool
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
@@ -93,13 +90,29 @@ class HttpClientService
      */
     public function getPermissionForOneRole(SyncAcc $syncAcc, int $idRole)
     {
-        $timestamp = $syncAcc->getLastCall()->getTimestamp();
-        $baseUrl = $this->config['acc_server'] . self::ACC_SERVER_ROUTE_ACL ;
-        $tUrl = preg_replace("/softwareToken/", $this->config['acc_software_token'], $baseUrl);
-        $t2Url = preg_replace("/serverToken/", $this->config['acc_server_token'], $tUrl);
-        $url = preg_replace("/timestamp/", $timestamp, $t2Url);
-        $url = preg_replace("/idRole/", $idRole, $url);
+        $url = $this->createUrl($syncAcc, $idRole);
         return $this->send($url);
+    }
+
+    /**
+     * @param SyncAcc $syncAcc
+     * @param int|null $idRole
+     * @return string
+     */
+    private function createUrl(SyncAcc $syncAcc, int $idRole = null): string
+    {
+        $timestamp = $syncAcc->getLastCall()->getTimestamp();
+        $baseUrl = (null === $idRole)
+            ? $this->config['acc_server'] . self::ACC_SERVER_ROUTE_ROLE
+            : $this->config['acc_server'] . self::ACC_SERVER_ROUTE_ACL ;
+
+        $softwareToken = preg_replace("/softwareToken/", $this->config['acc_software_token'], $baseUrl);
+        $serverToken = preg_replace("/serverToken/", $this->config['acc_server_token'], $softwareToken);
+        $url = preg_replace("/timestamp/", $timestamp, $serverToken);
+        if (null !== $idRole) {
+            $url = preg_replace("/idRole/", $idRole, $url);
+        }
+        return $url;
     }
 
 
@@ -117,8 +130,7 @@ class HttpClientService
         $response = $client->request('GET', $url);
         $statusCode = $response->getStatusCode();
         if ($statusCode == 200) {
-            $response = json_decode($response->getContent(), true);
-            return $response;
+            return json_decode($response->getContent(), true);
         } else {
             $response->getContent(true);
             return false;
