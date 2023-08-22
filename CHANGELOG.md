@@ -4,7 +4,7 @@ Changelog for NetBrothers SyncAcc
 Version 0.1.0 - 22.08.2023
 ----------------------------------
 - Replace annotations with attributes for using in Symfony ^6.3
-
+- BugFix TreeBuilder
 
 Version 0.0.2 - 03.02.2022
 ----------------------------------
