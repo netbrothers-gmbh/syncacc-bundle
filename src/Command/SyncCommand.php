@@ -13,6 +13,7 @@ namespace NetBrothers\SyncAccBundle\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use NetBrothers\SyncAccBundle\Services\HttpClientService;
 use NetBrothers\SyncAccBundle\Services\SyncService;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,6 +28,10 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
  * Class SyncCommand
  * @package NetBrothers\SyncAccBundle\Command
  */
+#[AsCommand(
+    name: 'netbrothers:sync-acc',
+    description: 'Synchronize permissions with Access Control Center in your local instance.',
+)]
 class SyncCommand extends Command
 {
     protected static $defaultName = 'netbrothers:sync-acc';
@@ -72,11 +77,10 @@ EOF;
     /** @var HttpClientService */
     private HttpClientService $httpService;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName(self::$defaultName)
-            ->setDescription('Synchronize permissions with Access Control Center in your local instance.')
             ->setHelp(self::HELP_TEXT)
             ->addOption(
                 'sync-table',
@@ -91,11 +95,12 @@ EOF;
      * SyncAccCommand constructor.
      * @param EntityManagerInterface $entityManager
      * @param array $config
+     * @param string|null $name
      * @throws \Exception
      */
-    public function __construct(EntityManagerInterface $entityManager, array $config = [])
+    public function __construct(EntityManagerInterface $entityManager, array $config = [], string $name = null)
     {
-        parent::__construct();
+        parent::__construct($name);
         $this->setConfig($config);
         $this->httpService = new HttpClientService($this->config, $this->clientConfig);
         $this->service = new SyncService($entityManager, $this->httpService);

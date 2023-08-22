@@ -8,30 +8,26 @@
  */
 
 namespace NetBrothers\SyncAccBundle\Entity;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use NetBrothers\SyncAccBundle\Repository\SyncAccRepository;
 
 /**
  * Class SyncAcc
  * @package NetBrothers\SyncAccBundle\Entity
- * @ORM\Entity(repositoryClass="NetBrothers\SyncAccBundle\Repository\SyncAccRepository")
  */
+#[ORM\Entity(repositoryClass: SyncAccRepository::class)]
 class SyncAcc
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(length: 255)]
     private string $actionName;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $lastCall = null;
 
     public function getId(): ?int
@@ -47,7 +43,6 @@ class SyncAcc
     public function setActionName(string $actionName): self
     {
         $this->actionName = $actionName;
-
         return $this;
     }
 
@@ -56,10 +51,9 @@ class SyncAcc
         return $this->lastCall;
     }
 
-    public function setLastCall(\DateTimeInterface $lastCall): self
+    public function setLastCall(?\DateTimeInterface $lastCall = null): self
     {
         $this->lastCall = $lastCall;
-
         return $this;
     }
 }

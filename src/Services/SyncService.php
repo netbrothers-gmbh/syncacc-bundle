@@ -55,7 +55,7 @@ class SyncService
      * @param string $requestAction
      * @throws \Exception|TransportExceptionInterface
      */
-    public function execute(string $requestAction = 'get-roles')
+    public function execute(string $requestAction = 'get-roles'): void
     {
         if ($requestAction == 'all') {
             $this->requestAction = 'get-roles';
@@ -84,7 +84,7 @@ class SyncService
      * @throws TransportExceptionInterface
      * @throws \Exception
      */
-    private function getRoles()
+    private function getRoles(): void
     {
         $response = $this->clientService->getRoles($this->tableService->getSyncAccEntity());
         if (false === $response) {
@@ -107,7 +107,7 @@ class SyncService
      * @throws TransportExceptionInterface
      * @throws \Exception
      */
-    private function getPermissionsForRoles()
+    private function getPermissionsForRoles(): void
     {
         $repository = $this->entityManager->getRepository(AclRole::class);
         /** @var AclRole $role */

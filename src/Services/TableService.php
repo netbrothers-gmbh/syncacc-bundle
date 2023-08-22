@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use NetBrothers\SyncAccBundle\Entity\AclAllow;
 use NetBrothers\SyncAccBundle\Entity\AclRole;
 use NetBrothers\SyncAccBundle\Entity\SyncAcc;
+use NetBrothers\SyncAccBundle\Repository\SyncAccRepository;
 
 /**
  * Class TableService
@@ -49,7 +50,7 @@ class TableService
     /**
      * @throws \Exception
      */
-    public function truncateTables()
+    public function truncateTables(): void
     {
         $con = $this->entityManager->getConnection();
         $con->executeQuery('SET FOREIGN_KEY_CHECKS = 0;');
@@ -65,13 +66,14 @@ class TableService
      * @param string $requestAction
      * @throws \Exception
      */
-    public function setSyncAccEntity(string $requestAction = 'get-roles')
+    public function setSyncAccEntity(string $requestAction = 'get-roles'): void
     {
         if (!in_array($requestAction, ['get-roles', 'get-acl'])) {
             throw new \Exception(sprintf('Requested action %s is not defined', $requestAction));
         }
+        /** @var SyncAccRepository $repository */
         $repository = $this->entityManager->getRepository(SyncAcc::class);
-        $this->syncAccEntity = $repository->findOneByActionName($requestAction); /** @phpstan-ignore-line */
+        $this->syncAccEntity = $repository->findOneByActionName($requestAction);
         if (is_null($this->syncAccEntity)) {
             $this->syncAccEntity = new SyncAcc();
             $lastCall = new \DateTime('2000-01-01 00:00:00');
@@ -82,7 +84,7 @@ class TableService
     /**
      * @throws \Exception
      */
-    public function updateSyncAccEntity()
+    public function updateSyncAccEntity(): void
     {
         $dateTime = new \DateTime("now");
         $this->syncAccEntity->setLastCall($dateTime);
@@ -96,7 +98,7 @@ class TableService
      * @throws Exception
      * @throws \Exception
      */
-    public function setRoles($response)
+    public function setRoles($response): void
     {
         $con = $this->entityManager->getConnection();
         $platform = $con->getDatabasePlatform();
@@ -126,7 +128,7 @@ class TableService
     /**
      * @param array $role
      */
-    private function addOneRole(array $role)
+    private function addOneRole(array $role): void
     {
         $newRole = new AclRole();
         foreach ($role as $k => $p) {
@@ -149,7 +151,7 @@ class TableService
      * @param $response
      * @throws \Exception
      */
-    public function setAuthForOneRole(AclRole $aclRole, $response)
+    public function setAuthForOneRole(AclRole $aclRole, $response): void
     {
         $repository = $this->entityManager->getRepository(AclAllow::class);
         $oldAuths = $repository->findBy(['idAclRole' => $aclRole->getId()]);
@@ -183,7 +185,7 @@ class TableService
      * @param AclRole $aclRole
      * @param array $action
      */
-    private function addOneAcl(AclRole $aclRole, array $action)
+    private function addOneAcl(AclRole $aclRole, array $action): void
     {
         $newAcl = new AclAllow();
         $newAcl

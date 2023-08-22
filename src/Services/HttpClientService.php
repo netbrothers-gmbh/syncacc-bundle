@@ -82,13 +82,13 @@ class HttpClientService
     /**
      * @param SyncAcc $syncAcc
      * @param int $idRole
-     * @return bool
+     * @return false|mixed
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function getPermissionForOneRole(SyncAcc $syncAcc, int $idRole)
+    public function getPermissionForOneRole(SyncAcc $syncAcc, int $idRole): mixed
     {
         $url = $this->createUrl($syncAcc, $idRole);
         return $this->send($url);
@@ -124,7 +124,7 @@ class HttpClientService
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    private function send(string $url)
+    private function send(string $url): mixed
     {
         $client = HttpClient::create($this->clientConfig);
         $response = $client->request('GET', $url);
