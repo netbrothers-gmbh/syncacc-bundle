@@ -9,45 +9,37 @@
 
 namespace NetBrothers\SyncAccBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use NetBrothers\SyncAccBundle\Repository\AclAllowRepository;
 
 /**
  * Class AclAllow
  * @package NetBrothers\SyncAccBundle\Entity
- * @ORM\Entity(repositoryClass="NetBrothers\SyncAccBundle\Repository\AclAllowRepository")
  */
+#[ORM\Entity(repositoryClass: AclAllowRepository::class)]
 class AclAllow
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column]
     private int $idAclRole;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(length: 255)]
     private string $controllerName;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(length: 255)]
     private string $actionName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
+    #[ORM\Column(length: 255, nullable: true)]
     private string $method;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private int $reasonType;
+    #[ORM\Column(nullable: true)]
+    private ?int $reasonType = null;
 
     public function getId(): ?int
     {

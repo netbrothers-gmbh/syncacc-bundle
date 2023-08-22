@@ -9,7 +9,6 @@
 
 namespace NetBrothers\SyncAccBundle\Services;
 
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use NetBrothers\SyncAccBundle\Entity\AclAllow;

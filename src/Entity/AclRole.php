@@ -8,50 +8,41 @@
  */
 
 namespace NetBrothers\SyncAccBundle\Entity;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use NetBrothers\SyncAccBundle\Repository\AclRoleRepository;
 
 /**
  * Class AclRole
  * @package NetBrothers\SyncAccBundle\Entity
- * @ORM\Entity(repositoryClass="NetBrothers\SyncAccBundle\Repository\AclRoleRepository")
  */
+#[ORM\Entity(repositoryClass: AclRoleRepository::class)]
 class AclRole
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(length: 255)]
     private string $name;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $displayName = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $beschreibung = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true, options={"default":0})
-     */
+    #[ORM\Column(nullable: true, options: ['default' => 0])]
     private int $hierarchyId = 0;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $defaultRoute = null;
 
     /**
      * @ORM\Column(type="boolean", options={"default":false})
      */
+    #[ORM\Column(options: ["default" => false])]
     private bool $isHidden = false;
 
     public function setId(int $id): self
