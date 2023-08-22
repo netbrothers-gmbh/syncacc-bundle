@@ -23,7 +23,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('netbrothers_nblogin');
+        $treeBuilder = new TreeBuilder('netbrothers_syncacc');
         $rootNode = $treeBuilder->getRootNode();
         $rootNode
             ->children()
