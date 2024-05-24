@@ -1,21 +1,19 @@
 <?php
+
 /**
  * NetBrothers Sync Access Control Center
  *
  * @author Stefan Wessel, NetBrothers GmbH
  * @date 25.03.21
- *
  */
 
 namespace NetBrothers\SyncAccBundle\Entity;
+
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use NetBrothers\SyncAccBundle\Dto\AclRoleDto;
 use NetBrothers\SyncAccBundle\Repository\AclRoleRepository;
 
-/**
- * Class AclRole
- * @package NetBrothers\SyncAccBundle\Entity
- */
 #[ORM\Entity(repositoryClass: AclRoleRepository::class)]
 class AclRole
 {
@@ -39,10 +37,7 @@ class AclRole
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $defaultRoute = null;
 
-    /**
-     * @ORM\Column(type="boolean", options={"default":false})
-     */
-    #[ORM\Column(options: ["default" => false])]
+    #[ORM\Column(options: ['default' => false])]
     private bool $isHidden = false;
 
     public function setId(int $id): self
@@ -56,7 +51,7 @@ class AclRole
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -116,7 +111,7 @@ class AclRole
         return $this;
     }
 
-    public function getIsHidden(): ?bool
+    public function getIsHidden(): bool
     {
         return $this->isHidden;
     }
@@ -128,8 +123,21 @@ class AclRole
         return $this;
     }
 
+    public function getDto(): AclRoleDto
+    {
+        return new AclRoleDto(
+            \intval($this->getId()),
+            $this->getName(),
+            $this->getDisplayName() ?? '',
+            $this->getBeschreibung() ?? '',
+            \intval($this->getHierarchyId()),
+            $this->getDefaultRoute() ?? '',
+            $this->getIsHidden(),
+        );
+    }
+
     /**
-     * @return array
+     * @deprecated Use `getDto()` instead.
      */
     public function getViewDataArray(): array
     {
