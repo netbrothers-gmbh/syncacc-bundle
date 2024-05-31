@@ -1,13 +1,20 @@
 Changelog for NetBrothers SyncAcc
 ===================================
 
+Version 2.0.0 - 31.05.2024
+----------------------------------
+- updated symfony requirements to >=7 <8
+- updated php requirements to >=8.2
+- Upgrading Version-Number to 2.0.0
+
+
 Version 1.0.0 - 06.12.2023
 ----------------------------------
 - Fixing Deprecated Since symfony/console 6.1: Relying on the static property "$defaultName"
   for setting a command name is deprecated.
 - updated symfony requirements to >=6 <7
 - updated php requirements to >=8.1
-- Upgrading Version-Number to 2.0.0
+- Upgrading Version-Number to 1.0.0
 
 
 Version 0.1.0 - 22.08.2023
