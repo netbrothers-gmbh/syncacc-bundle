@@ -10,7 +10,6 @@
 namespace NetBrothers\SyncAccBundle\Services;
 
 
-use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use NetBrothers\SyncAccBundle\Entity\AclRole;
@@ -25,30 +24,13 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
  */
 class SyncService
 {
-
-    /** @var EntityManagerInterface */
-    private EntityManagerInterface $entityManager;
-
-    /** @var HttpClientService */
-    private HttpClientService $clientService;
-
-    /** @var TableService */
-    private TableService $tableService;
-
-    /** @var string */
     private string $requestAction = 'get-roles';
 
-
-    /**
-     * SyncService constructor.
-     * @param EntityManagerInterface $entityManager
-     * @param HttpClientService $httpClientService
-     */
-    public function __construct(EntityManagerInterface $entityManager, HttpClientService $httpClientService)
-    {
-        $this->entityManager = $entityManager;
-        $this->clientService = $httpClientService;
-        $this->tableService = new TableService($entityManager);
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly HttpClientService $clientService,
+        private readonly TableService $tableService
+    ) {
     }
 
     /**
@@ -57,45 +39,55 @@ class SyncService
      */
     public function execute(string $requestAction = 'get-roles'): void
     {
-        if ($requestAction == 'all') {
+        if ($requestAction === 'all') {
             $this->requestAction = 'get-roles';
             $this->tableService->truncateTables();
         } else {
             $this->requestAction = $requestAction;
         }
+
         $this->tableService->setSyncAccEntity($this->requestAction);
+
         if ($this->requestAction === 'get-roles') {
             $this->getRoles();
         } else {
             $this->getPermissionsForRoles();
         }
+
         $this->tableService->updateSyncAccEntity();
-        if ($requestAction == 'all') {
+
+        if ($requestAction === 'all') {
             $this->execute('get-acl');
         }
     }
 
     /**
-     * @throws ConnectionException
+     * @return string|null
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function getBuildName(): ?string
+    {
+        return $this->clientService->getBuildName();
+    }
+
+    /**
      * @throws Exception
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
-     * @throws \Exception
      */
     private function getRoles(): void
     {
         $response = $this->clientService->getRoles($this->tableService->getSyncAccEntity());
-        if (false === $response) {
-            throw new \Exception("Cannot get roles from ACC-Server");
+        if (null === $response) {
+            throw new \RuntimeException("Cannot get roles from ACC-Server or response was empty.");
         }
-        if (is_array($response)
-            && array_key_exists('error', $response)
-            && array_key_exists('update', $response)) {
-            if (true !== boolval($response['error']) && true !== boolval($response['update'])) {
-                return;
-            }
+        if ($this->isUpdateSkipped($response)) {
+            return;
         }
         $this->tableService->setRoles($response);
     }
@@ -105,7 +97,7 @@ class SyncService
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
-     * @throws \Exception
+     * @throws Exception
      */
     private function getPermissionsForRoles(): void
     {
@@ -113,17 +105,21 @@ class SyncService
         /** @var AclRole $role */
         foreach ($repository->findAll() as $role) {
             $response = $this->clientService->getPermissionForOneRole($this->tableService->getSyncAccEntity(), $role->getId());
-            if (false === $response) {
-                throw new \Exception("Cannot get permission for role " . $role->getDisplayName() . " from ACC-Server");
+            if (null === $response) {
+                // Log or handle the error for a specific role, but don't stop the whole process
+                continue;
             }
-            if (is_array($response)
-                && array_key_exists('error', $response)
-                && array_key_exists('update', $response)) {
-                if (true !== boolval($response['error']) && true !== boolval($response['update'])) {
-                    return;
-                }
+            if ($this->isUpdateSkipped($response)) {
+                continue;
             }
             $this->tableService->setAuthForOneRole($role, $response);
         }
+    }
+
+    private function isUpdateSkipped(array $response): bool
+    {
+        return isset($response['error'], $response['update']) &&
+            !$response['error'] &&
+            !$response['update'];
     }
 }

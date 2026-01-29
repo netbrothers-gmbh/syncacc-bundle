@@ -3,30 +3,38 @@
  * NetBrothers Sync Access Control Center
  *
  * @author Stefan Wessel, NetBrothers GmbH
- * @date 24.03.21
+ * @date 29.01.2026
  *
  */
 
 namespace NetBrothers\SyncAccBundle;
 
-use NetBrothers\SyncAccBundle\DependencyInjection\NetBrothersSyncAccExtension;
-use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 /**
  * Class NetBrothersSyncAccBundle
  * @package NetBrothers\SyncAccBundle
  */
-class NetBrothersSyncAccBundle extends Bundle
+class NetBrothersSyncAccBundle extends AbstractBundle
 {
-    /**
-     * Overridden to allow for the custom extension alias.
-     */
-    public function getContainerExtension(): ?ExtensionInterface
+    public function getPath(): string
     {
-        if (null === $this->extension) {
-            $this->extension = new NetBrothersSyncAccExtension();
-        }
-        return $this->extension;
+        return \dirname(__DIR__);
+    }
+
+    public function configure(DefinitionConfigurator $definition): void
+    {
+        $definition->import('../config/definition.php');
+    }
+
+    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
+    {
+        $builder->setParameter('net_brothers_sync_acc.default_null', null);
+
+        $container->parameters()->set('net_brothers_sync_acc', $config);
+        $container->import('../config/services.php');
     }
 }

@@ -1,0 +1,23 @@
+net_brothers_sync_acc:
+  # Enables or disables the bundle.
+  acc_enable: '%env(bool:ACC_ENABLE)%'
+
+  # --- The following values are only required if acc_enable is true ---
+
+  # URL to your ACC-Server instance
+  acc_server: '%env(default:net_brothers_sync_acc.default_null:ACC_SERVER)%'
+
+  # The Software Token (AppId) from your ACC
+  acc_software_token: '%env(default:net_brothers_sync_acc.default_null:ACC_SOFTWARE_TOKEN)%'
+
+  # The Server Token from your ACC
+  acc_server_token: '%env(default:net_brothers_sync_acc.default_null:ACC_SERVER_TOKEN)%'
+
+  # Whether to use Basic Authentication
+  acc_use_basic_auth: '%env(default:net_brothers_sync_acc.default_null:bool:ACC_USE_BASIC_AUTH)%'
+
+  # Username for Basic Authentication
+  acc_basic_auth_user: '%env(default:net_brothers_sync_acc.default_null:ACC_BASIC_AUTH_USER)%'
+
+  # Password for Basic Authentication
+  acc_basic_auth_password: '%env(default:net_brothers_sync_acc.default_null:ACC_BASIC_AUTH_PASSWORD)%'

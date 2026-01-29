@@ -1,6 +1,13 @@
 Changelog for NetBrothers SyncAcc
 ===================================
 
+Version 3.0.0 - 29.01.2026
+----------------------------------
+- refactoring for symfony 8
+- updated php requirements to >=8.4
+- Upgrading Version-Number to 3.0.0
+
+
 Version 2.0.0 - 31.05.2024
 ----------------------------------
 - updated symfony requirements to >=7 <8

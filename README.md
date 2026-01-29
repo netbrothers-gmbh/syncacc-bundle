@@ -19,7 +19,7 @@ Applications that use Symfony Flex
 Open a command console, enter your project directory and execute:
 
 ```console
-composer require netbrothers-gmbh/version-bundle
+composer require netbrothers-gmbh/syncacc-bundle
 ```
 
 Applications that don't use Symfony Flex
@@ -31,7 +31,7 @@ Open a command console, enter your project directory and execute the
 following command to download the latest stable version of this bundle:
 
 ```console
-composer require netbrothers-gmbh/version-bundle
+composer require netbrothers-gmbh/syncacc-bundle
 ```
 
 ### Step 2: Enable the Bundle
@@ -44,7 +44,7 @@ in the `config/bundles.php` file of your project:
 
 return [
     // ...
-    NetBrothers\VersionBundle\NetBrothersVersionBundle::class => ['all' => true],
+    NetBrothers\SyncAccBundle\NetBrothersSyncAccBundle::class => ['all' => true],
 ];
 ```
 
@@ -52,12 +52,12 @@ Setup
 =============
 You have to set up the bundle:
 
-1. Copy `installation/config/packages/netbrothers_syncacc.yaml` to symfony's config path.
+1. Copy `install/config/packages/net_brothers_sync_acc.yaml` to symfony's config path.
 
 
-2. Set the credentials either in `.env`-file or `netbrothers_syncacc.yaml`:
+2. Set the credentials either in `.env`-file or `net_brothers_sync_acc.yaml`:
    
-| `.env`                            |   `netbrothers_syncacc.yaml`      | Description                       |
+| `.env`                            |   `net_brothers_sync_acc.yaml`    | Description                       |
 | --------                          | --------                          | ----------                        |
 | ACC_ENABLE                        | acc_enable                        | enable acc                        |
 | ACC_SERVER                        | acc_server                        | Url ACC-Server                    |
