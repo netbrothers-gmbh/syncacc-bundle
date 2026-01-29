@@ -99,7 +99,7 @@ class HttpClientService
      * @param int|null $idRole
      * @return string
      */
-    private function createUrl(SyncAcc $syncAcc, int $idRole = null): string
+    private function createUrl(SyncAcc $syncAcc, ?int $idRole = null): string
     {
         $timestamp = $syncAcc->getLastCall()->getTimestamp();
         $baseUrl = (null === $idRole)
