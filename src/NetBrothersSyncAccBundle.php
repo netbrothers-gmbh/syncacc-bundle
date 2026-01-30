@@ -1,10 +1,14 @@
 <?php
-/**
- * NetBrothers Sync Access Control Center
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the NetBrothers SyncAccBundle.
  *
- * @author Stefan Wessel, NetBrothers GmbH
- * @date 29.01.2026
+ * (c) 2024 NetBrothers GmbH | Stefan Wessel (https://netbrothers.de)
  *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace NetBrothers\SyncAccBundle;
@@ -14,10 +18,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-/**
- * Class NetBrothersSyncAccBundle
- * @package NetBrothers\SyncAccBundle
- */
 class NetBrothersSyncAccBundle extends AbstractBundle
 {
     public function getPath(): string

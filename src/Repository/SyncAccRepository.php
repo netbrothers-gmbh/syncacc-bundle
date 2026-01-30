@@ -1,10 +1,14 @@
 <?php
-/**
- * NetBrothers Sync Access Control Center
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the NetBrothers SyncAccBundle.
  *
- * @author Stefan Wessel, NetBrothers GmbH
- * @date 25.03.21
+ * (c) 2024 NetBrothers GmbH | Stefan Wessel (https://netbrothers.de)
  *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace NetBrothers\SyncAccBundle\Repository;
@@ -13,10 +17,8 @@ namespace NetBrothers\SyncAccBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use NetBrothers\SyncAccBundle\Entity\SyncAcc;
+
 /**
- * Class SyncAccRepository
- * @package NetBrothers\SyncAccBundle\Repository
- *
  * @method SyncAcc|null find($id, $lockMode = null, $lockVersion = null)
  * @method SyncAcc|null findOneBy(array $criteria, array $orderBy = null)
  * @method SyncAcc[]    findAll()
@@ -24,7 +26,6 @@ use NetBrothers\SyncAccBundle\Entity\SyncAcc;
  */
 class SyncAccRepository extends EntityRepository
 {
-
     /**
      * @param string $requestAction
      * @return SyncAcc|null

@@ -1,25 +1,22 @@
 <?php
-/**
- * NetBrothers Sync Access Control Center
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the NetBrothers SyncAccBundle.
  *
- * @author Stefan Wessel, NetBrothers GmbH
- * @date 25.03.21
+ * (c) 2024 NetBrothers GmbH | Stefan Wessel (https://netbrothers.de)
  *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace NetBrothers\SyncAccBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\Query\Expr;
-use Doctrine\ORM\QueryBuilder;
 use NetBrothers\SyncAccBundle\Entity\AclRole;
 
 /**
- * Class AclRoleRepository
- * @package NetBrothers\SyncAccBundle\Repository
- *
  * @method AclRole|null find($id, $lockMode = null, $lockVersion = null)
  * @method AclRole|null findOneBy(array $criteria, array $orderBy = null)
  * @method AclRole[]    findAll()
@@ -27,7 +24,6 @@ use NetBrothers\SyncAccBundle\Entity\AclRole;
  */
 class AclRoleRepository extends EntityRepository
 {
-
     /**
      * @param int $hierarchyId
      * @return array
@@ -47,5 +43,4 @@ class AclRoleRepository extends EntityRepository
             ->getQuery()
             ->getArrayResult();
     }
-
 }

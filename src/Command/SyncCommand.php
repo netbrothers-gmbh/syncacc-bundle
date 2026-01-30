@@ -1,10 +1,14 @@
 <?php
-/**
- * NetBrothers Sync Access Control Center
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the NetBrothers SyncAccBundle.
  *
- * @author Stefan Wessel, NetBrothers GmbH
- * @date 24.03.21
+ * (c) 2024 NetBrothers GmbH | Stefan Wessel (https://netbrothers.de)
  *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace NetBrothers\SyncAccBundle\Command;
@@ -22,17 +26,13 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-/**
- * Class SyncCommand
- * @package NetBrothers\SyncAccBundle\Command
- */
 #[AsCommand(
     name: 'netbrothers:sync-acc',
     description: 'Synchronize permissions with Access Control Center in your local instance.',
 )]
-class SyncCommand extends Command
+final class SyncCommand extends Command
 {
-    private const HELP_TEXT = <<<EOF
+    private const string HELP_TEXT = <<<EOF
 Synchronize permissions with Access Control Center in your local instance.
 
 Options

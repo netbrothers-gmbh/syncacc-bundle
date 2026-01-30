@@ -1,10 +1,14 @@
 <?php
-/**
- * NetBrothers Sync Access Control Center
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the NetBrothers SyncAccBundle.
  *
- * @author Stefan Wessel, NetBrothers GmbH
- * @date 24.03.21
+ * (c) 2024 NetBrothers GmbH | Stefan Wessel (https://netbrothers.de)
  *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace NetBrothers\SyncAccBundle\Services;
@@ -17,11 +21,7 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-/**
- * Class HttpClientService
- * @package NetBrothers\SyncAccBundle\Services
- */
-class HttpClientService
+final class HttpClientService
 {
     const string ACC_SERVER_ROUTE_ROLE = "/sync/get-roles/softwareToken/serverToken/timestamp";
     const string ACC_SERVER_ROUTE_ACL = "/sync/get-permissions/softwareToken/serverToken/timestamp/idRole";
@@ -30,7 +30,7 @@ class HttpClientService
     private HttpClientInterface $client;
 
     public function __construct(
-        private ConfigService $configService,
+        private readonly ConfigService $configService,
         HttpClientInterface $client
     ) {
         $clientOptions = [
@@ -108,9 +108,9 @@ class HttpClientService
 
         $softwareToken = preg_replace("/softwareToken/", $this->configService->getSoftwareToken(), $baseUrl);
         $serverToken = preg_replace("/serverToken/", $this->configService->getServerToken(), $softwareToken);
-        $url = preg_replace("/timestamp/", $timestamp, $serverToken);
+        $url = preg_replace("/timestamp/", (string) $timestamp, $serverToken);
         if (null !== $idRole) {
-            $url = preg_replace("/idRole/", $idRole, $url);
+            $url = preg_replace("/idRole/", (string) $idRole, $url);
         }
         return $url;
     }

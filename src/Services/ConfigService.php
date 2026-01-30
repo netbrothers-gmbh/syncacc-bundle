@@ -1,8 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the NetBrothers SyncAccBundle.
+ *
+ * (c) 2024 NetBrothers GmbH | Stefan Wessel (https://netbrothers.de)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace NetBrothers\SyncAccBundle\Services;
 
-class ConfigService
+final readonly class ConfigService
 {
     public function __construct(
         private array $config

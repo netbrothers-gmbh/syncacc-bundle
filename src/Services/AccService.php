@@ -1,10 +1,14 @@
 <?php
-/**
- * NetBrothers Sync Access Control Center
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the NetBrothers SyncAccBundle.
  *
- * @author Stefan Wessel, NetBrothers GmbH
- * @date 25.03.21
+ * (c) 2024 NetBrothers GmbH | Stefan Wessel (https://netbrothers.de)
  *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace NetBrothers\SyncAccBundle\Services;
@@ -15,39 +19,23 @@ use NetBrothers\SyncAccBundle\Entity\AclAllow;
 use NetBrothers\SyncAccBundle\Entity\AclRole;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * Class AccService
- * @package NetBrothers\SyncAccBundle\Services
- */
-class AccService
+final class AccService
 {
-    /** @var EntityManagerInterface */
-    private EntityManagerInterface $entityManager;
-
-    /** @var UserInterface|null */
     private ?UserInterface $user = null;
 
-    /** @param UserInterface $user */
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager
+    ) {
+    }
+
     public function setUser(UserInterface $user): void
     {
         $this->user = $user;
     }
 
-    /**
-     * @return UserInterface
-     */
     public function getUser(): ?UserInterface
     {
         return $this->user;
-    }
-
-    /**
-     * AccService constructor.
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
     }
 
     /**
@@ -72,9 +60,9 @@ class AccService
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function isAllowedByUserRoles(
-        UserInterface $user = null,
-        string $routeName = null,
-        string $method = null
+        ?UserInterface $user = null,
+        ?string $routeName = null,
+        ?string $method = null
     ): bool
     {
         if ( null === $routeName) {
@@ -87,7 +75,7 @@ class AccService
             return false;
         }
         $userRoles = $user->getRoles();
-        if (0 < count($userRoles)) {
+        if (count($userRoles) > 0) {
             $repo = $this->entityManager->getRepository(AclAllow::class);
             return $repo->isRouteAllowed($userRoles, $routeName, $method);
         }
@@ -100,7 +88,7 @@ class AccService
      * @param string|null $method
      * @return bool
      */
-    public function isAllowed(int $idAclRole, string $routeName = null, string $method = null): bool
+    public function isAllowed(int $idAclRole, ?string $routeName = null, ?string $method = null): bool
     {
         if (null === $routeName) {
             return false;
@@ -113,9 +101,9 @@ class AccService
      * @param UserInterface|null $user
      * @return array|ArrayCollection
      */
-    public function getRolesAllowedByUser(UserInterface $user = null)
+    public function getRolesAllowedByUser(?UserInterface $user = null)
     {
-        if (empty($user) || true !== method_exists($user, 'getAclRole')) {
+        if (empty($user) || !method_exists($user, 'getAclRole')) {
             return new ArrayCollection();
         }
         $hierarchyId = $user->getAclRole()->getHierarchyId();
