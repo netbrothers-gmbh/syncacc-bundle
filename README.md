@@ -1,104 +1,58 @@
-NetBrothers SyncAcc for Symfony
-===================================
-This is a symfony bundle for using NetBrothers Access Control Center (ACC).
+# NetBrothers SyncAcc Bundle for Symfony
 
-The ACC offers you a way to handle permissions based on roles and routes.
-This bundle communicates with your ACC-instance and synchronizes your defined permissions
-into your project.
+<!-- Badges will go here -->
+<p>
+    <a href="https://packagist.org/packages/netbrothers-gmbh/syncacc-bundle"><img src="https://img.shields.io/packagist/v/netbrothers-gmbh/syncacc-bundle" alt="Latest Stable Version"></a>
+    <a href="https://packagist.org/packages/netbrothers-gmbh/syncacc-bundle"><img src="https://img.shields.io/packagist/dt/netbrothers-gmbh/syncacc-bundle" alt="Total Downloads"></a>
+    <a href="https://github.com/netbrothers-gmbh/syncacc-bundle/blob/main/LICENSE"><img src="https://img.shields.io/github/license/netbrothers-gmbh/syncacc-bundle" alt="License"></a>
+</p>
 
+This Symfony bundle provides an easy way to integrate the NetBrothers Access Control Center (ACC) into your Symfony application. 
+It allows you to synchronize roles and permissions from your central ACC instance into your local Symfony application's database.
 
-Installation
-============
-Make sure Composer is installed globally, as explained in the
-[installation chapter](https://getcomposer.org/doc/00-intro.md)
-of the Composer documentation.
+## Features
 
-Applications that use Symfony Flex
-----------------------------------
+- Synchronize roles and permissions via a console command.
+- Easy configuration through environment variables.
+- Compatible with Symfony 7.4 and 8.x.
 
-Open a command console, enter your project directory and execute:
-
-```console
-composer require netbrothers-gmbh/version-bundle
-```
-
-Applications that don't use Symfony Flex
-----------------------------------------
-
-### Step 1: Download the Bundle
-
-Open a command console, enter your project directory and execute the
-following command to download the latest stable version of this bundle:
+## Installation
 
 ```console
-composer require netbrothers-gmbh/version-bundle
+composer require netbrothers-gmbh/syncacc-bundle
 ```
 
-### Step 2: Enable the Bundle
+## Quick Start
 
-Then, enable the bundle by adding it to the list of registered bundles
-in the `config/bundles.php` file of your project:
+1.  **Configure your environment variables** in the `.env` file. At a minimum, you need:
 
-```php
-// config/bundles.php
+    ```dotenv
+    ACC_ENABLE=true
+    ACC_SERVER=https://your-acc-instance.com
+    ACC_SOFTWARE_TOKEN=your_software_token
+    ACC_SERVER_TOKEN=your_server_token
+    ```
 
-return [
-    // ...
-    NetBrothers\VersionBundle\NetBrothersVersionBundle::class => ['all' => true],
-];
-```
+2.  **Run the synchronization command:**
 
-Setup
-=============
-You have to set up the bundle:
+    ```console
+    php bin/console netbrothers:sync-acc
+    ```
 
-1. Copy `installation/config/packages/netbrothers_syncacc.yaml` to symfony's config path.
+## Documentation
 
+For detailed instructions on installation, configuration, and usage, please see the **[full documentation](doc/index.md)**.
 
-2. Set the credentials either in `.env`-file or `netbrothers_syncacc.yaml`:
-   
-| `.env`                            |   `netbrothers_syncacc.yaml`      | Description                       |
-| --------                          | --------                          | ----------                        |
-| ACC_ENABLE                        | acc_enable                        | enable acc                        |
-| ACC_SERVER                        | acc_server                        | Url ACC-Server                    |
-| ACC_SOFTWARE_TOKEN                | acc_software_token                | SoftwareToken                     |
-| ACC_SERVER_TOKEN                  | acc_server_token                  | Server-Token                      |
-| ACC_USE_BASIC_AUTH                | acc_use_basic_auth                | enable Authentication Basic-Auth  |
-| ACC_BASIC_AUTH_USER               | acc_basic_auth_user               | Username Basic-Auth               |
-| ACC_BASIC_AUTH_PASSWORD           | acc_basic_auth_password           | Password Basic-Auth               |
+## Changelog
 
-3. Clear symfony's cache.
-   
+See the [CHANGELOG.md](CHANGELOG.md) file for a log of all changes and versions.
 
-4. Create tables by migration.
+## License
 
+This bundle is released under the MIT license. See the bundled [LICENSE](LICENSE) file for details.
 
-Usage
-=====
+## Author
 
-1. Open a command console, enter your project directory and execute the following command:
-```console
-php bin/console netbrothers:acc 
-```
+This bundle is developed and maintained by [Stefan Wessel, NetBrothers GmbH](https://netbrothers.de).
 
-You can specify some options:
-
-| option                    | meaning           |
-| -----------               | -------           |
-| all (default)             | get roles and acl |
-| roles                     | get roles         |
-| acl                       | get acls          |
-
-__CAUTION__: Option `acl` only works, if table acl_role is filled.
-
-
-
-Author
-======
-[Stefan Wessel, NetBrothers GmbH](https://netbrothers.de)
-
-[![nb.logo](https://netbrothers.de/wp-content/uploads/2020/12/netbrothers_logo.png)](https://netbrothers.de)
-
-Licence
-=======
-MIT
+[![NetBrothers Logo](https://netbrothers.de/wp-content/uploads/2020/12/netbrothers_logo.png)](https://netbrothers.de)

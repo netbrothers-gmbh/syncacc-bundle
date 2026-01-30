@@ -1,10 +1,14 @@
 <?php
 
-/**
- * NetBrothers Sync Access Control Center
+declare(strict_types=1);
+
+/*
+ * This file is part of the NetBrothers SyncAccBundle.
  *
- * @author Stefan Wessel, NetBrothers GmbH
- * @date 25.03.21
+ * (c) 2024 NetBrothers GmbH | Stefan Wessel (https://netbrothers.de)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace NetBrothers\SyncAccBundle\Entity;
@@ -126,11 +130,11 @@ class AclRole
     public function getDto(): AclRoleDto
     {
         return new AclRoleDto(
-            \intval($this->getId()),
+            $this->getId(),
             $this->getName(),
             $this->getDisplayName() ?? '',
             $this->getBeschreibung() ?? '',
-            \intval($this->getHierarchyId()),
+            $this->getHierarchyId(),
             $this->getDefaultRoute() ?? '',
             $this->getIsHidden(),
         );
@@ -148,7 +152,7 @@ class AclRole
             "beschreibung" => $this->beschreibung,
             "hierarchyId" => $this->hierarchyId,
             "defaultRoute" => $this->defaultRoute,
-            "isHidden"    => ($this->getIsHidden()) ? true : false,
+            "isHidden"    => $this->getIsHidden(),
         ];
     }
 }

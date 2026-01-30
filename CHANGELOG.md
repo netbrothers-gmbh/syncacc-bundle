@@ -1,9 +1,18 @@
 Changelog for NetBrothers SyncAcc
 ===================================
 
+Version 3.0.0 - 29.01.2026
+----------------------------------
+- refactoring for Symfony 7.4 and Symfony 8
+- updated php requirements to >=8.4
+- updated documentation
+- [BC BREAK] All service and command classes are now marked as `final`.
+- Upgrading Version-Number to 3.0.0
+
+
 Version 2.0.0 - 31.05.2024
 ----------------------------------
-- updated symfony requirements to >=7 <8
+- updated Symfony requirements to >=7 <8
 - updated php requirements to >=8.2
 - Upgrading Version-Number to 2.0.0
 
@@ -12,7 +21,7 @@ Version 1.0.0 - 06.12.2023
 ----------------------------------
 - Fixing Deprecated Since symfony/console 6.1: Relying on the static property "$defaultName"
   for setting a command name is deprecated.
-- updated symfony requirements to >=6 <7
+- updated Symfony requirements to >=6 <7
 - updated php requirements to >=8.1
 - Upgrading Version-Number to 1.0.0
 
@@ -25,7 +34,7 @@ Version 0.1.0 - 22.08.2023
 Version 0.0.2 - 03.02.2022
 ----------------------------------
 - Fix Bug SyncCommand option `sync-table` does not accept any value. 
-- Upgrading for php 8 and symfony 5.4
+- Upgrading for php 8 and Symfony 5.4
 - Adding "?ExtensionInterface" as a native return type declaration in class `NetBrothers\SyncAccBundle\NetBrothersSyncAccBundle`.
 - Upgrading Version-Number
 

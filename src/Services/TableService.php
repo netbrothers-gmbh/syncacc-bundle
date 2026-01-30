@@ -1,15 +1,18 @@
 <?php
-/**
- * NetBrothers Sync Access Control Center
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the NetBrothers SyncAccBundle.
  *
- * @author Stefan Wessel, NetBrothers GmbH
- * @date 25.03.21
+ * (c) 2024 NetBrothers GmbH | Stefan Wessel (https://netbrothers.de)
  *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace NetBrothers\SyncAccBundle\Services;
 
-use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use NetBrothers\SyncAccBundle\Entity\AclAllow;
@@ -17,34 +20,18 @@ use NetBrothers\SyncAccBundle\Entity\AclRole;
 use NetBrothers\SyncAccBundle\Entity\SyncAcc;
 use NetBrothers\SyncAccBundle\Repository\SyncAccRepository;
 
-/**
- * Class TableService
- * @package NetBrothers\SyncAccBundle\Services
- */
-class TableService
+final class TableService
 {
-
-    /** @var EntityManagerInterface */
-    private EntityManagerInterface $entityManager;
-
-    /** @var SyncAcc|null */
     private ?SyncAcc $syncAccEntity = null;
 
-    /**
-     * @return SyncAcc
-     */
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager
+    ) {
+    }
+
     public function getSyncAccEntity(): ?SyncAcc
     {
         return $this->syncAccEntity;
-    }
-
-    /**
-     * TableService constructor.
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
     }
 
     /**
@@ -94,9 +81,7 @@ class TableService
 
     /**
      * @param $response
-     * @throws ConnectionException
      * @throws Exception
-     * @throws \Exception
      */
     public function setRoles($response): void
     {
@@ -125,9 +110,6 @@ class TableService
         }
     }
 
-    /**
-     * @param array $role
-     */
     private function addOneRole(array $role): void
     {
         $newRole = new AclRole();
@@ -155,7 +137,7 @@ class TableService
     {
         $repository = $this->entityManager->getRepository(AclAllow::class);
         $oldAuths = $repository->findBy(['idAclRole' => $aclRole->getId()]);
-        if (0 < count($oldAuths)) {
+        if (count($oldAuths) > 0) {
             foreach ($oldAuths as $oldAuth) {
                 $this->entityManager->remove($oldAuth);
             }
@@ -181,10 +163,6 @@ class TableService
         }
     }
 
-    /**
-     * @param AclRole $aclRole
-     * @param array $action
-     */
     private function addOneAcl(AclRole $aclRole, array $action): void
     {
         $newAcl = new AclAllow();

@@ -1,20 +1,22 @@
 <?php
-/**
- * NetBrothers Sync Access Control Center
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the NetBrothers SyncAccBundle.
  *
- * @author Stefan Wessel, NetBrothers GmbH
- * @date 25.03.21
+ * (c) 2024 NetBrothers GmbH | Stefan Wessel (https://netbrothers.de)
  *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace NetBrothers\SyncAccBundle\Repository;
+
 use Doctrine\ORM\EntityRepository;
 use NetBrothers\SyncAccBundle\Entity\AclAllow;
 
 /**
- * Class AclAllowRepository
- * @package NetBrothers\SyncAccBundle\Repository
- *
  * @method AclAllow|null find($id, $lockMode = null, $lockVersion = null)
  * @method AclAllow|null findOneBy(array $criteria, array $orderBy = null)
  * @method AclAllow[]    findAll()
@@ -22,7 +24,6 @@ use NetBrothers\SyncAccBundle\Entity\AclAllow;
  */
 class AclAllowRepository extends EntityRepository
 {
-
     /**
      * @param string $routeName
      * @return bool
@@ -49,7 +50,7 @@ class AclAllowRepository extends EntityRepository
      * @param string|null $method
      * @return bool
      */
-    public function isRouteAllowed($idAclRole, string $routeName, string $method = null): bool
+    public function isRouteAllowed(array|int $idAclRole, string $routeName, ?string $method = null): bool
     {
         try {
             $qb = $this->createQueryBuilder('aclAllow');
@@ -66,7 +67,7 @@ class AclAllowRepository extends EntityRepository
                     ->setParameter('idAclRole', $idAclRole)
                 ;
             }
-            if (null !== $method && in_array($method, ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'])) {
+            if (in_array($method, ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'])) {
                 $qb->andWhere('aclAllow.method = :method')->setParameter('method', $method);
             }
             $query = $qb->getQuery();
@@ -76,6 +77,4 @@ class AclAllowRepository extends EntityRepository
             return false;
         }
     }
-
-
 }

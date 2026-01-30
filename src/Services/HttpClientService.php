@@ -1,50 +1,50 @@
 <?php
-/**
- * NetBrothers Sync Access Control Center
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the NetBrothers SyncAccBundle.
  *
- * @author Stefan Wessel, NetBrothers GmbH
- * @date 24.03.21
+ * (c) 2024 NetBrothers GmbH | Stefan Wessel (https://netbrothers.de)
  *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace NetBrothers\SyncAccBundle\Services;
 
 
 use NetBrothers\SyncAccBundle\Entity\SyncAcc;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-/**
- * Class HttpClientService
- * @package NetBrothers\SyncAccBundle\Services
- */
-class HttpClientService
+final class HttpClientService
 {
-    /** @var string Template route for getting roles */
-    const ACC_SERVER_ROUTE_ROLE = "/sync/get-roles/softwareToken/serverToken/timestamp";
+    const string ACC_SERVER_ROUTE_ROLE = "/sync/get-roles/softwareToken/serverToken/timestamp";
+    const string ACC_SERVER_ROUTE_ACL = "/sync/get-permissions/softwareToken/serverToken/timestamp/idRole";
+    const string ACC_BUILD_NAME_ROUTE = "/sync/get-build/";
 
-    /** @var string Template route for getting acls for one role */
-    const ACC_SERVER_ROUTE_ACL = "/sync/get-permissions/softwareToken/serverToken/timestamp/idRole";
+    private HttpClientInterface $client;
 
-    /** @var string Template route for getting acls for one role */
-    const ACC_BUILD_NAME_ROUTE = "/sync/get-build/";
+    public function __construct(
+        private readonly ConfigService $configService,
+        HttpClientInterface $client
+    ) {
+        $clientOptions = [
+            'headers' => ['Content-Type' => 'application/json'],
+        ];
 
-    /** @var array Konfiguration für den HttpClient */
-    private array $clientConfig = [
-        'auth_basic' => [],
-        'headers' => ['Content-Type' => 'application/json'],
-    ];
+        if ($this->configService->isBasicAuthEnabled()) {
+            $clientOptions['auth_basic'] = [
+                $this->configService->getBasicAuthUser(),
+                $this->configService->getBasicAuthPassword()
+            ];
+        }
 
-    /** @var array */
-    private array $config = [];
-
-    public function __construct(array $config, array $clientConfig)
-    {
-        $this->config = $config;
-        $this->clientConfig = $clientConfig;
+        $this->client = $client->withOptions($clientOptions);
     }
 
     /**
@@ -56,8 +56,8 @@ class HttpClientService
      */
     public function getBuildName(): ?string
     {
-        $url  = $this->config['acc_server'] . self::ACC_BUILD_NAME_ROUTE;
-        $url .=  $this->config['acc_software_token'] . '/' . $this->config['acc_server_token'];
+        $url  = $this->configService->getServer() . self::ACC_BUILD_NAME_ROUTE;
+        $url .=  $this->configService->getSoftwareToken() . '/' . $this->configService->getServerToken();
         $response = $this->send($url);
         if (is_array($response) && !empty($response['build'])) {
             return $response['build'];
@@ -67,13 +67,13 @@ class HttpClientService
 
     /**
      * @param SyncAcc $syncAcc
-     * @return false|mixed
+     * @return array|null
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function getRoles(SyncAcc $syncAcc)
+    public function getRoles(SyncAcc $syncAcc): ?array
     {
         $url = $this->createUrl($syncAcc, null);
         return $this->send($url);
@@ -82,13 +82,13 @@ class HttpClientService
     /**
      * @param SyncAcc $syncAcc
      * @param int $idRole
-     * @return false|mixed
+     * @return array|null
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function getPermissionForOneRole(SyncAcc $syncAcc, int $idRole): mixed
+    public function getPermissionForOneRole(SyncAcc $syncAcc, int $idRole): ?array
     {
         $url = $this->createUrl($syncAcc, $idRole);
         return $this->send($url);
@@ -99,18 +99,18 @@ class HttpClientService
      * @param int|null $idRole
      * @return string
      */
-    private function createUrl(SyncAcc $syncAcc, int $idRole = null): string
+    private function createUrl(SyncAcc $syncAcc, ?int $idRole = null): string
     {
         $timestamp = $syncAcc->getLastCall()->getTimestamp();
         $baseUrl = (null === $idRole)
-            ? $this->config['acc_server'] . self::ACC_SERVER_ROUTE_ROLE
-            : $this->config['acc_server'] . self::ACC_SERVER_ROUTE_ACL ;
+            ? $this->configService->getServer() . self::ACC_SERVER_ROUTE_ROLE
+            : $this->configService->getServer() . self::ACC_SERVER_ROUTE_ACL ;
 
-        $softwareToken = preg_replace("/softwareToken/", $this->config['acc_software_token'], $baseUrl);
-        $serverToken = preg_replace("/serverToken/", $this->config['acc_server_token'], $softwareToken);
-        $url = preg_replace("/timestamp/", $timestamp, $serverToken);
+        $softwareToken = preg_replace("/softwareToken/", $this->configService->getSoftwareToken(), $baseUrl);
+        $serverToken = preg_replace("/serverToken/", $this->configService->getServerToken(), $softwareToken);
+        $url = preg_replace("/timestamp/", (string) $timestamp, $serverToken);
         if (null !== $idRole) {
-            $url = preg_replace("/idRole/", $idRole, $url);
+            $url = preg_replace("/idRole/", (string) $idRole, $url);
         }
         return $url;
     }
@@ -118,22 +118,17 @@ class HttpClientService
 
     /**
      * @param string $url
-     * @return false|mixed
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
+     * @return array|null
      * @throws TransportExceptionInterface
      */
-    private function send(string $url): mixed
+    private function send(string $url): ?array
     {
-        $client = HttpClient::create($this->clientConfig);
-        $response = $client->request('GET', $url);
-        $statusCode = $response->getStatusCode();
-        if ($statusCode == 200) {
-            return json_decode($response->getContent(), true);
-        } else {
-            $response->getContent(true);
-            return false;
+        $response = $this->client->request('GET', $url);
+
+        if (200 !== $response->getStatusCode()) {
+            $response->getHeaders(true);
+            return null;
         }
+        return $response->toArray(true);
     }
 }
