@@ -22,7 +22,6 @@ use NetBrothers\SyncAccBundle\Repository\AclRoleRepository;
 class AclRole
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
 
